@@ -7,6 +7,10 @@ import { AddHashtagDialog } from "@/components/AddHashtagDialog";
 const Index = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
+  const handleAddHashtagSet = (keyword: string, tags: string[]) => {
+    console.log("Adding new hashtag set:", { keyword, tags });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container py-8">
@@ -29,6 +33,7 @@ const Index = () => {
       <AddHashtagDialog 
         open={isAddDialogOpen} 
         onOpenChange={setIsAddDialogOpen}
+        onSave={handleAddHashtagSet}
       />
     </div>
   );
