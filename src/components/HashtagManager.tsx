@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Edit, Search, Trash2 } from "lucide-react";
+import { Edit, Search, Trash2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EditHashtagDialog } from "./EditHashtagDialog";
+import { AddHashtagDialog } from "./AddHashtagDialog";
 
 interface HashtagSet {
   id: string;
@@ -33,6 +34,7 @@ export const HashtagManager = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [editingSet, setEditingSet] = useState<HashtagSet | null>(null);
   const [hashtagSets, setHashtagSets] = useState<HashtagSet[]>(MOCK_DATA);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const filteredSets = hashtagSets.filter((set) =>
     set.keyword.toLowerCase().includes(searchTerm.toLowerCase())
@@ -40,6 +42,16 @@ export const HashtagManager = () => {
 
   const handleDelete = (id: string) => {
     setHashtagSets((prev) => prev.filter((set) => set.id !== id));
+  };
+
+  const handleAddHashtagSet = (keyword: string, tags: string[]) => {
+    const newSet: HashtagSet = {
+      id: String(Date.now()), // Generate a unique ID
+      keyword,
+      tags,
+    };
+    setHashtagSets((prev) => [...prev, newSet]);
+    console.log("Added new hashtag set:", newSet);
   };
 
   return (
@@ -50,14 +62,23 @@ export const HashtagManager = () => {
             Automated HashTags: {hashtagSets.length}
           </p>
         </div>
-        <div className="relative w-64">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
-          <Input
-            placeholder="Search for keyword"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-8"
-          />
+        <div className="flex items-center space-x-4">
+          <div className="relative w-64">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+            <Input
+              placeholder="Search for keyword"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-8"
+            />
+          </div>
+          <Button 
+            onClick={() => setIsAddDialogOpen(true)}
+            className="bg-wp-primary hover:bg-wp-primary/90"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add New Tag
+          </Button>
         </div>
       </div>
 
@@ -114,6 +135,12 @@ export const HashtagManager = () => {
           );
           setEditingSet(null);
         }}
+      />
+
+      <AddHashtagDialog 
+        open={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+        onSave={handleAddHashtagSet}
       />
     </div>
   );

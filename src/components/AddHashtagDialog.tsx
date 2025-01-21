@@ -3,23 +3,40 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/components/ui/use-toast";
 
 interface AddHashtagDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSave: (keyword: string, tags: string[]) => void;
 }
 
-export const AddHashtagDialog = ({ open, onOpenChange }: AddHashtagDialogProps) => {
+export const AddHashtagDialog = ({ open, onOpenChange, onSave }: AddHashtagDialogProps) => {
   const [keyword, setKeyword] = useState("");
   const [tags, setTags] = useState(["", "", "", ""]);
+  const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically save to your database
-    console.log("Saving new hashtag set:", { keyword, tags });
+    
+    if (!keyword.trim()) {
+      toast({
+        title: "Error",
+        description: "Keyword is required",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    onSave(keyword, tags);
     onOpenChange(false);
     setKeyword("");
     setTags(["", "", "", ""]);
+    
+    toast({
+      title: "Success",
+      description: "Hashtag set added successfully",
+    });
   };
 
   const handleTagChange = (index: number, value: string) => {
